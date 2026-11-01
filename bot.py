@@ -57,7 +57,24 @@ def keep_alive():
     t = Thread(target=run_flask, daemon=True)
     t.start()
     print("Flask Keep-Alive server started.")
-# --- End Flask Keep Alive ---
+
+# --- Self Ping to keep Render free tier awake ---
+def self_ping_loop(port):
+    """Ping our own Flask endpoint every 10 minutes to keep Render from sleeping."""
+    url = f"http://127.0.0.1:{port}/"
+    while True:
+        try:
+            r = requests.get(url, timeout=10)
+            logger.info(f"🔄 Self-ping OK  HTTP {r.status_code}  at {datetime.now():%H:%M:%S}")
+        except Exception as e:
+            logger.warning(f"⚠️ Self-ping failed: {e}")
+        time.sleep(600)  # 10 minutes
+
+def start_self_ping():
+    port = int(os.environ.get("PORT", 8080))
+    threading.Thread(target=self_ping_loop, args=(port,), daemon=True).start()
+    logger.info("Self-ping thread started (every 10 min).")
+# --- End Flask Keep Alive / Self Ping ---
 
 # --- Configuration ---
 TOKEN = '8820323998:AAFsKmxbzPvfTM8WizUwlf1AvFCVIZ4k__U' 
@@ -2054,6 +2071,7 @@ atexit.register(cleanup_on_exit)
 
 if __name__ == '__main__':
     keep_alive()
+    start_self_ping()          # <-- keeps Render free tier awake
     logger.info("Bot starting on Windows...")
     auto_start_saved_scripts()
     
