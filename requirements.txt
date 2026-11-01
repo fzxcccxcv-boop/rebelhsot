@@ -1,8 +1,12 @@
+# Core dependencies (required by bot.py directly)
 pyTelegramBotAPI==4.25.0
 Flask==3.0.3
 psutil==6.0.0
 requests==2.32.3
 python-dotenv==1.0.1
+
+# Pre-installed common libs (so your bot doesn't auto-pip-install at runtime,
+# which is slow and often fails on Render's restricted environment)
 python-telegram-bot==21.6
 aiogram==3.15.0
 pyrogram==2.0.106
@@ -15,3 +19,6 @@ python-dateutil==2.9.0.post0
 pandas==2.2.3
 numpy==2.1.1
 SQLAlchemy==2.0.35
+lxml==5.3.0
+httpx==0.27.2
+aiohttp==3.10.9
