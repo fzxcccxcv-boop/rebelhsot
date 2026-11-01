@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: rebel-hosting-bot
+    runtime: python
+    plan: free
+    region: oregon          # change to: frankfurt | singapore | ohio | virginia
+    branch: main
+    buildCommand: |
+      pip install --upgrade pip setuptools wheel
+      pip install -r requirements.txt
+    startCommand: python bot.py
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: PORT
+        value: 8080
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      # Uncomment and set these in the Render dashboard instead of hardcoding:
+      # - key: TOKEN
+      #   sync: false
+      # - key: OWNER_ID
+      #   sync: false
